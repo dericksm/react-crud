@@ -1,15 +1,12 @@
-import React, { Component } from 'react';
-import { Container } from 'semantic-ui-react';
 import axios from 'axios';
-import io from 'socket.io-client';
-
-import TableUser from '../TableUser/TableUser';
-import ModalUser from '../ModalUser/ModalUser';
-
-import logo from '../../logo.svg';
-import shirts from '../../shirts.png';
+import React, { Component } from 'react';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import Login from '../Login/Login';
+import SignUp from '../SignUp/SignUp';
 import './App.css';
-import Login from '../Login/TableUser';
+
+import {login} from '../../services/Auth'
+
 
 class App extends Component {
 
@@ -21,7 +18,8 @@ class App extends Component {
     this.state = {
       users: [],
       restaurants: [],
-      items: []
+      items: [],
+      loggedIn: false
     }
 
     this.fetchUsers = this.fetchUsers.bind(this);
@@ -41,13 +39,13 @@ class App extends Component {
     axios.get(`http://localhost:3000/users`, {
       headers: { 'x-access-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVkYzhiNTVhMDNmZWRiMTFkYzg1MDk5MyIsImlhdCI6MTU3MzQ1MDYwOSwiZXhwIjoxNTczNDU0MjA5fQ.9QpQL_KfEUeQ71ro2QE-G93DAAQgdHUXbJu7CQkzDR4' }
     })
-    .then((response) => {
-      console.log(response)
-      this.setState({ users: response.data.users });
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+      .then((response) => {
+        console.log(response)
+        this.setState({ users: response.data.users });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 
   handleRestaurantAdded(restaurant) {
@@ -56,11 +54,17 @@ class App extends Component {
     this.setState({ restaurants: restaurants });
   }
 
+  handleUserLogin(res) {
+    login(res)
+    this.setState({ loggedIn: true });
+  }
+  
   handleUserAdded(user) {
     let users = this.state.users.slice();
     users.push(user);
     this.setState({ users: users });
   }
+
 
   handleItemAdded(item) {
     let items = this.state.items.slice();
@@ -88,20 +92,38 @@ class App extends Component {
     this.setState({ users: users });
   }
 
+ 
   render() {
-
-    let online = this.state.online;
-    let verb = (online <= 1) ? 'is' : 'are'; // linking verb, if you'd prefer
-    let noun = (online <= 1) ? 'person' : 'people';
 
     return (
       <div>
         <div className='App'>
-          <div className='App-header'>           
+          <div className='App-header'>
+            <BrowserRouter>
+              <Switch>
+                <Route exact path="/"
+                  render={() => <Login onUserLogin={this.handleUserLogin} />}
+                />
+
+                <Route path="/a" component={SignUp} />
+
+                <Route path="/signup"
+                  render={() => <SignUp onUserAdded={this.handleUserAdded} />}
+                />
+              </Switch>
+            </BrowserRouter>
           </div>
         </div>
-        <Login></Login>
-        <Container>
+
+      </div>
+    );
+  }
+}
+
+export default App;
+
+
+/* <Container>
           <ModalUser
             headerTitle='Add User'
             buttonTriggerTitle='Add New'
@@ -112,7 +134,6 @@ class App extends Component {
             onRestaurantAdded={this.handleRestaurantAdded}
             server={this.server}
           />
-          <em id='online'>{`${online} ${noun} ${verb} online.`}</em>
           <TableUser
             onUserUpdated={this.handleUserUpdated}
             onUserDeleted={this.handleUserDeleted}
@@ -120,11 +141,4 @@ class App extends Component {
             server={this.server}
             socket={this.socket}
           />
-        </Container>
-        <br/>
-      </div>
-    );
-  }
-}
-
-export default App;
+        </Container> */
