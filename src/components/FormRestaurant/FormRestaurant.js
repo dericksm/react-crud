@@ -1,9 +1,17 @@
 import React, { Component } from 'react';
-import { Message, Button, Form, Select } from 'semantic-ui-react';
-import axios from 'axios';
+import { Container, Divider, Dropdown, Grid, Header, Image, List, Menu, Modal, Form, Message, Button, Segment} from 'semantic-ui-react';
+import { withRouter } from 'react-router';
 
+import { Link } from 'react-router-dom';
+import axios from 'axios';
+import { getToken } from '../../services/Auth'
+
+import './FormRestaurant.css';
+
+let token = null
 
 class FormRestaurant extends Component {
+
 
   constructor(props) {
     super(props);
@@ -22,18 +30,10 @@ class FormRestaurant extends Component {
 
   componentWillMount() {
     // Fill in the form with the appropriate data if user id is provided
-    if (this.props.userID) {
-      axios.get(`${this.props.server}/api/users/${this.props.userID}`)
-        .then((response) => {
-          this.setState({
-            name: response.data.name,
-            email: response.data.email,
-            password: response.data.password
-          });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+    if (!this.props.loggedIn) {
+      this.props.history.push('/');
+    } else {
+      token = getToken()
     }
   }
 
@@ -58,26 +58,19 @@ class FormRestaurant extends Component {
       deliveryTime: this.state.deliveryTime
     }
 
-    // Acknowledge that if the user id is provided, we're updating via PUT
-    // Otherwise, we're creating a new data via POST
-    const method = this.props.userID ? 'put' : 'post';
-    const params = this.props.userID ? this.props.userID : '';
-    console.log(restaurant)
     axios({
       method: `POST`,
       responseType: 'json',
       url: `http://localhost:3000/restaurant`,
-      headers: {'x-access-token' : 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVkYzhiNTVhMDNmZWRiMTFkYzg1MDk5MyIsImlhdCI6MTU3MzQ1MDQ1NiwiZXhwIjoxNTczNDU0MDU2fQ.fTWGVBKrNqW7kMD2jA7r8FbOV1_27fbfXwcQE6tJXvU'},
+      headers: { 'x-access-token': token },
       data: restaurant,
-      
+
     })
       .then((response) => {
         this.setState({
           formClassName: 'success',
-          formSuccessMessage: response.data.msg
         });
 
-        if (!this.props.userID) {
           this.setState({
             name: '',
             category: '',
@@ -85,11 +78,7 @@ class FormRestaurant extends Component {
             hours: '',
             deliveryTime: ''
           });
-          this.props.onRestaurantAdded(response.data.result);
-        }
-        else {
-          this.props.onRestaurantUpdated(response.data.result);
-        }
+          
 
       })
       .catch((err) => {
@@ -97,7 +86,7 @@ class FormRestaurant extends Component {
           if (err.response.data) {
             this.setState({
               formClassName: 'warning',
-              formErrorMessage: err.response.data.msg
+              formErrorMessage: err.response.data.message
             });
           }
         }
@@ -117,67 +106,100 @@ class FormRestaurant extends Component {
     const formErrorMessage = this.state.formErrorMessage;
 
     return (
-      <Form className={formClassName} onSubmit={this.handleSubmit}>
+      <Container>
+        <Menu fixed='top' inverted>
+          <Container>
+            <Menu.Item as={Link} to='/' header>
+              Restaurante Dodói
+        </Menu.Item>
+            <Menu.Item as={Link} to='/orders'>Pedidos</Menu.Item>
+            <Menu.Item as={Link} to='/users'>Usuários</Menu.Item>
+            <Dropdown item simple text='Cadastros'>
+              <Dropdown.Menu>
+                <Dropdown.Item as={Link} to='/restaurant'>Restaurantes</Dropdown.Item>
+                <Dropdown.Item as={Link} to='/item'>Itens</Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+          </Container>
+        </Menu>
+        
+          <Grid textAlign='center' style={{ height: '100vh' }} verticalAlign='middle'>
+        <Grid.Column style={{ maxWidth: 450 }}>
+          <Header as='h2' color='teal' textAlign='center'>
+            Cadstro de Restaurante:
+        </Header>
+        <Form className={formClassName} size='large' onSubmit={this.handleSubmit}>
         <Form.Input
-          label='Nome'
-          type='text'
-          placeholder='Elon Musk'
-          name='name'
-          maxLength='40'
-          required
-          value={this.state.name}
-          onChange={this.handleInputChange}
-        />
-        <Form.Input
-          label='Categoria'
-          type='text'
-          placeholder='elonmusk@tesla.com'
-          name='category'
-          maxLength='40'
-          required
-          value={this.state.category}
-          onChange={this.handleInputChange}
-        />
-        <Form.Input
-          label='Sobre'
-          type='text'
-          name='about'
-          value={this.state.about}
-          onChange={this.handleInputChange}
-        />
-        <Form.Input
-          label='Horário'
-          type='text'
-          placeholder='18'
-          name='hours'
-          value={this.state.hours}
-          onChange={this.handleInputChange}
-        />
-        <Form.Input
-          label='Tempo de entrega'
-          type='text'
-          placeholder='18'
-          name='deliveryTime'
-          value={this.state.deliveryTime}
-          onChange={this.handleInputChange}
-        />
-        <Message
-          success
-          color='green'
-          header='Nice one!'
-          content={formSuccessMessage}
-        />
-        <Message
-          warning
-          color='yellow'
-          header='Woah!'
-          content={formErrorMessage}
-        />
-        <Button color={this.props.buttonColor} floated='right'>{this.props.buttonSubmitTitle}</Button>
-        <br /><br /> {/* Yikes! Deal with Semantic UI React! */}
-      </Form>
+                label='Nome'
+                type='text'
+                placeholder='Padaria do Português'
+                name='name'
+                maxLength='40'
+                required
+                value={this.state.name}
+                onChange={this.handleInputChange}
+              />
+              <Form.Input
+                label='Categoria'
+                type='text'
+                placeholder='Padaria e confeitaria'
+                name='category'
+                maxLength='40'
+                required
+                value={this.state.category}
+                onChange={this.handleInputChange}
+              />
+              <Form.Input
+                label='Sobre'
+                type='text'
+                name='about'
+                required
+                placeholder='Há quarenta anos na região'
+                value={this.state.about}
+                onChange={this.handleInputChange}
+              />
+              <Form.Input
+                label='Horário'
+                type='text'
+                placeholder='8 ás 19h'
+                name='hours'
+                required
+                value={this.state.hours}
+                onChange={this.handleInputChange}
+              />
+              <Form.Input
+                label='Tempo de entrega em minutos'
+                type='text'
+                placeholder='20'
+                name='deliveryTime'
+                value={this.state.deliveryTime}
+                onChange={this.handleInputChange}
+                required
+              />
+              <Message
+                success
+                color='green'
+                header='Cadastrado com sucesso'
+                content={formSuccessMessage}
+              />
+              <Message
+                warning
+                color='yellow'
+                header='Woah!'
+                content={formErrorMessage}
+              />
+              <Button color="green" floated='center'>Cadastrar</Button>
+              <br /><br />
+            </Form>
+          
+        </Grid.Column>
+      </Grid>
+            
+        
+      </Container>
+
     );
   }
 }
 
-export default FormRestaurant;
+export default withRouter(FormRestaurant);

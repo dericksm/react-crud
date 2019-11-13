@@ -1,11 +1,14 @@
 import axios from 'axios';
 import React, { Component } from 'react';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 import Login from '../Login/Login';
 import SignUp from '../SignUp/SignUp';
+import ListComponent from '../List/List'
+
 import './App.css';
 
-import {login} from '../../services/Auth'
+import { login } from '../../services/Auth'
+import FormRestaurant from '../FormRestaurant/FormRestaurant';
 
 
 class App extends Component {
@@ -54,11 +57,13 @@ class App extends Component {
     this.setState({ restaurants: restaurants });
   }
 
-  handleUserLogin(res) {
+  handleUserLogin = (res) => {
     login(res)
     this.setState({ loggedIn: true });
+
+    return <Redirect to='/signup' />
   }
-  
+
   handleUserAdded(user) {
     let users = this.state.users.slice();
     users.push(user);
@@ -92,7 +97,7 @@ class App extends Component {
     this.setState({ users: users });
   }
 
- 
+
   render() {
 
     return (
@@ -105,10 +110,15 @@ class App extends Component {
                   render={() => <Login onUserLogin={this.handleUserLogin} />}
                 />
 
-                <Route path="/a" component={SignUp} />
+                <Route path="/a" component={ListComponent} />
 
                 <Route path="/signup"
                   render={() => <SignUp onUserAdded={this.handleUserAdded} />}
+                />
+
+                <Route path="/restaurant"
+                  render={() => <FormRestaurant loggedIn={this.state.loggedIn} onUserAdded={this.handleUserAdded} />}
+
                 />
               </Switch>
             </BrowserRouter>

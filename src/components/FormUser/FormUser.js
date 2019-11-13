@@ -59,7 +59,7 @@ class FormUser extends Component {
           password: ''
         });
         this.props.onUserAdded(response.data.result);
-        // this.props.history.push('/');
+        this.props.history.push('/');
       })
       .catch((err) => {
         if (err.response) {

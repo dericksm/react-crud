@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { Container } from 'semantic-ui-react';
+
 import axios from 'axios';
-import { Button, Modal } from 'semantic-ui-react';
+import {  Modal, Container } from 'semantic-ui-react';
 
 import FormUser from '../FormUser/FormUser';
 

@@ -43,13 +43,13 @@ class Login extends Component {
     })
       .then((response) => {
         debugger
-        console.log('saiu')
         this.setState({
           formClassName: 'success',
           formSuccessMessage: 'Deu certo'
         });
 
         this.props.onUserLogin(response.data.data.token)
+        this.props.history.push('/restaurant');
 
       })
       .catch((err) => {
@@ -128,4 +128,4 @@ class Login extends Component {
   }
 }
 
-export default Login;
+export default withRouter(Login);
