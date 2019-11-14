@@ -38,6 +38,7 @@ class FormUser extends Component {
       email: this.state.email,
       password: this.state.password
     }
+    console.log(user)
 
 
     axios({
@@ -47,6 +48,7 @@ class FormUser extends Component {
       data: user
     })
       .then((response) => {
+        console.log(response)
         this.setState({
           formClassName: 'success',
           formSuccessMessage: response.data.msg
