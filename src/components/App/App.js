@@ -9,6 +9,10 @@ import './App.css';
 
 import { login } from '../../services/Auth'
 import FormRestaurant from '../FormRestaurant/FormRestaurant';
+import FormItem from '../FormItem/FormItem';
+import FormOrder from '../FormOrder/FormOrder';
+import FormUser from '../FormUser/FormUser';
+import TableUser from '../TableUser/TableUser';
 
 
 class App extends Component {
@@ -39,9 +43,7 @@ class App extends Component {
 
   // Fetch data from the back-end
   fetchUsers() {
-    axios.get(`http://localhost:3000/users`, {
-      headers: { 'x-access-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVkYzhiNTVhMDNmZWRiMTFkYzg1MDk5MyIsImlhdCI6MTU3MzQ1MDYwOSwiZXhwIjoxNTczNDU0MjA5fQ.9QpQL_KfEUeQ71ro2QE-G93DAAQgdHUXbJu7CQkzDR4' }
-    })
+    axios.get(`http://localhost:3000/users`)
       .then((response) => {
         console.log(response)
         this.setState({ users: response.data.users });
@@ -69,6 +71,8 @@ class App extends Component {
     users.push(user);
     this.setState({ users: users });
   }
+
+  
 
 
   handleItemAdded(item) {
@@ -118,8 +122,19 @@ class App extends Component {
 
                 <Route path="/restaurant"
                   render={() => <FormRestaurant loggedIn={this.state.loggedIn} onUserAdded={this.handleUserAdded} />}
-
                 />
+                <Route path="/item"
+                  render={() => <FormItem loggedIn={this.state.loggedIn} />}
+                />
+
+                <Route path="/users"
+                  render={() => <TableUser users={this.state.users} />}
+                />
+
+                <Route path="/orders"
+                  render={() => <FormOrder loggedIn={this.state.loggedIn} />}
+                />
+
               </Switch>
             </BrowserRouter>
           </div>

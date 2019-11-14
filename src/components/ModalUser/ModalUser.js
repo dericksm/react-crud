@@ -7,15 +7,22 @@ class ModalUser extends Component {
 
   render() {
     return (
-      <Modal open="true">
+      <Modal
+        trigger={<Button color={this.props.buttonColor}>{this.props.buttonTriggerTitle}</Button>}
+        dimmer='inverted'
+        size='tiny'
+        closeIcon='close'
+      >
         <Modal.Header>{this.props.headerTitle}</Modal.Header>
         <Modal.Content>
           <FormUser
             buttonSubmitTitle={this.props.buttonSubmitTitle}
             buttonColor={this.props.buttonColor}
-            onItemAdded={this.props.onItemAdded}
-            onItemUpdated={this.props.onItemUpdated}
+            userID={this.props.userID}
+            onUserAdded={this.props.onUserAdded}
+            onUserUpdated={this.props.onUserUpdated}
             server={this.props.server}
+            socket={this.props.socket}
           />
         </Modal.Content>
       </Modal>

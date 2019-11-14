@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { Message, Button, Form, Select } from 'semantic-ui-react';
-
-import { withRouter } from 'react-router';
+import { Message, Button, Form, Select, Container, Grid, Header } from 'semantic-ui-react';
 import axios from 'axios';
-
+import { getToken } from '../../services/Auth'
+import HeaderComp from '../Header/Header'
+import { withRouter } from 'react-router';
 
 class FormUser extends Component {
 
@@ -47,7 +47,6 @@ class FormUser extends Component {
       data: user
     })
       .then((response) => {
-        debugger
         this.setState({
           formClassName: 'success',
           formSuccessMessage: response.data.msg
@@ -58,8 +57,6 @@ class FormUser extends Component {
           email: '',
           password: ''
         });
-        this.props.onUserAdded(response.data.result);
-        this.props.history.push('/');
       })
       .catch((err) => {
         if (err.response) {
@@ -86,51 +83,54 @@ class FormUser extends Component {
     const formErrorMessage = this.state.formErrorMessage;
 
     return (
-      <Form className={formClassName} onSubmit={this.handleSubmit}>
-        <Form.Input
-          label='Name'
-          type='text'
-          placeholder='Elon Musk'
-          name='name'
-          maxLength='40'
-          required
-          value={this.state.name}
-          onChange={this.handleInputChange}
-        />
-        <Form.Input
-          label='Email'
-          type='email'
-          placeholder='elonmusk@tesla.com'
-          name='email'
-          maxLength='40'
-          required
-          value={this.state.email}
-          onChange={this.handleInputChange}
-        />
-        <Form.Input
-          label='Password'
-          required
-          type='password'
-          placeholder='18'
-          name='password'
-          value={this.state.password}
-          onChange={this.handleInputChange}
-        />
-        <Message
-          success
-          color='green'
-          header='Logado sucesso!'
-          content={formSuccessMessage}
-        />
-        <Message
-          warning
-          color='yellow'
-          header='E-mail ou senha incorretos!'
-          content={formErrorMessage}
-        />
-        <Button color={this.props.buttonColor} floated='right'>{this.props.buttonSubmitTitle}</Button>
-        <br /><br /> {/* Yikes! Deal with Semantic UI React! */}
-      </Form>
+
+      
+            <Form className={formClassName} onSubmit={this.handleSubmit}>
+              <Form.Input
+                label='Name'
+                type='text'
+                placeholder='Elon Musk'
+                name='name'
+                maxLength='40'
+                required
+                value={this.state.name}
+                onChange={this.handleInputChange}
+              />
+              <Form.Input
+                label='Email'
+                type='email'
+                placeholder='elonmusk@tesla.com'
+                name='email'
+                maxLength='40'
+                required
+                value={this.state.email}
+                onChange={this.handleInputChange}
+              />
+              <Form.Input
+                label='Senha'
+                required
+                type='password'
+                placeholder='18'
+                name='password'
+                value={this.state.password}
+                onChange={this.handleInputChange}
+              />
+              <Message
+                success
+                color='green'
+                header='Cadastrado com sucesso!'
+                content={formSuccessMessage}
+              />
+              <Message
+                warning
+                color='yellow'
+                header='Usuário já existe'
+                content={formErrorMessage}
+              />
+              <Button color="green" floated='right'>Criar usuário</Button>
+              <br /><br /> {/* Yikes! Deal with Semantic UI React! */}
+            </Form>
+
     );
   }
 }

@@ -1,16 +1,21 @@
 import React, { Component } from 'react';
-import { Table } from 'semantic-ui-react';
+import { Table, Container, Header, Grid } from 'semantic-ui-react';
 
 import ModalUser from '../ModalUser/ModalUser';
 import ModalConfirmDelete from '../ModalConfirmDelete/ModalConfirmDelete';
 
+import axios from 'axios';
+import HeaderComp from '../Header/Header'
+
 class TableUser extends Component {
+
+
 
   render() {
 
-    let users = [];
+    let users = this.props.users;
 
-    users = users.map((user) => 
+    users = users.map((user) =>
       <Table.Row key={user._id}>
         <Table.Cell>{user.name}</Table.Cell>
         <Table.Cell>{user.email}</Table.Cell>
@@ -39,21 +44,34 @@ class TableUser extends Component {
     );
 
     // Make every new user appear on top of the list
-    users =  [...users].reverse();
+    users = [...users].reverse();
 
     return (
-      <Table singleLine>
-        <Table.Header>
-          <Table.Row>
-            <Table.HeaderCell>Nome</Table.HeaderCell>
-            <Table.HeaderCell>Email</Table.HeaderCell>
-            <Table.HeaderCell>Editar</Table.HeaderCell>
-          </Table.Row>
-        </Table.Header>
-        <Table.Body>
-          {users}
-        </Table.Body>
-      </Table>
+      <Container>
+        <HeaderComp></HeaderComp>
+        <Container>
+
+          <Grid textAlign='center' style={{ marginTop: '5vh' }} verticalAlign='middle'>
+            <Grid.Column style={{ maxWidth: 450 }}>
+
+              <Table singleLine style={{ height: '100vh' }}>
+                <Table.Header>
+                  <Table.Row>
+                    <Table.HeaderCell>Nome</Table.HeaderCell>
+                    <Table.HeaderCell>Email</Table.HeaderCell>
+                    <Table.HeaderCell>Editar</Table.HeaderCell>
+                  </Table.Row>
+                </Table.Header>
+                <Table.Body>
+                  {users}
+                </Table.Body>
+              </Table>
+
+            </Grid.Column>
+          </Grid>
+
+        </Container>
+      </Container>
     );
   }
 }

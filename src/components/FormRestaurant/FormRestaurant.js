@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import { Container, Divider, Dropdown, Grid, Header, Image, List, Menu, Modal, Form, Message, Button, Segment} from 'semantic-ui-react';
 import { withRouter } from 'react-router';
 
-import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { getToken } from '../../services/Auth'
 
+import HeaderComp from '../Header/Header'
 import './FormRestaurant.css';
 
 let token = null
@@ -107,21 +107,7 @@ class FormRestaurant extends Component {
 
     return (
       <Container>
-        <Menu fixed='top' inverted>
-          <Container>
-            <Menu.Item as={Link} to='/' header>
-              Restaurante Dodói
-        </Menu.Item>
-            <Menu.Item as={Link} to='/orders'>Pedidos</Menu.Item>
-            <Menu.Item as={Link} to='/users'>Usuários</Menu.Item>
-            <Dropdown item simple text='Cadastros'>
-              <Dropdown.Menu>
-                <Dropdown.Item as={Link} to='/restaurant'>Restaurantes</Dropdown.Item>
-                <Dropdown.Item as={Link} to='/item'>Itens</Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
-          </Container>
-        </Menu>
+        <HeaderComp></HeaderComp>
         
           <Grid textAlign='center' style={{ height: '100vh' }} verticalAlign='middle'>
         <Grid.Column style={{ maxWidth: 450 }}>

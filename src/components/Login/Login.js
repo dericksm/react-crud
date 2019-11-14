@@ -42,7 +42,6 @@ class Login extends Component {
       data: user
     })
       .then((response) => {
-        debugger
         this.setState({
           formClassName: 'success',
           formSuccessMessage: 'Deu certo'
