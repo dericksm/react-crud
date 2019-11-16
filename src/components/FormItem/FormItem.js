@@ -19,6 +19,7 @@ class FormItem extends Component {
       description: '',
       price: '',
       restaurantId: '',
+      showMe: true,
     }
 
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -28,8 +29,32 @@ class FormItem extends Component {
 
   componentWillMount() {
 
-    // Fill in the form with the appropriate data if user id is provided
-    if (!this.props.loggedIn) {
+    if (this.props.item) {
+      this.setState({
+        name: this.props.item.name,
+        description: this.props.item.description,
+        price: this.props.item.price,
+        showMe: false
+      })
+      axios.get(`http://localhost:3000/restaurant`, {
+        headers: { 'x-access-token': getToken() },
+      })
+        .then((response) => {
+
+          console.log(response)
+          response.data.restaurants.forEach((restaurant, index) => {
+            restaurants.push({ "key": index, "value": restaurant._id, "text": restaurant.name })
+          })
+
+
+          console.log(restaurants)
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+
+    }
+    else if (!this.props.loggedIn) {
       this.props.history.push('/');
     } else {
       token = getToken()
@@ -64,60 +89,97 @@ class FormItem extends Component {
   handleSubmit(e) {
     // Prevent browser refresh
     e.preventDefault();
-
-    const item = {
-      name: this.state.name,
-      description: this.state.description,
-      price: this.state.price,
-      restaurantId: this.state.restaurantId
-    }
-    
-    console.log(item)
-    axios({
-      method: `POST`,
-      responseType: 'json',
-      url: `http://localhost:3000/item`,
-      headers: { 'x-access-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVkYzhiNTVhMDNmZWRiMTFkYzg1MDk5MyIsImlhdCI6MTU3MzQ0MDk5MCwiZXhwIjoxNTczNDQ0NTkwfQ.yarjc27Vd4mfaXWOTL94eHAzA_rpg062_ifO65VeVNY' },
-      data: item,
-
-    })
-      .then((response) => {
-        this.setState({
-          formClassName: 'success'
-        });
-
-
-        this.setState({
-          name: '',
-          description: '',
-          price: '',
-          restaurantId: ''
-        });
-
+    if (this.props.item) {
+      const item = {
+        name: this.state.name,
+        description: this.state.description,
+        price: this.state.price,
+        restaurantId: this.state.restaurantId
+      }
+      
+      console.log(item)
+      axios({
+        method: `PUT`,
+        responseType: 'json',
+        url: `http://localhost:3000/item/${this.props.item._id}`,
+        headers: { 'x-access-token': token },
+        data: item,
+  
       })
-      .catch((err) => {
-        if (err.response) {
-          if (err.response.data) {
+        .then((response) => {
+          this.setState({
+            formClassName: 'success'
+          });
+        })
+        .catch((err) => {
+          if (err.response) {
+            if (err.response.data) {
+              this.setState({
+                formClassName: 'warning',
+                formErrorMessage: err.response.data.Message
+              });
+            }
+          }
+          else {
             this.setState({
               formClassName: 'warning',
-              formErrorMessage: err.response.data.Message
+              formErrorMessage: 'Something went wrong. ' + err
             });
           }
-        }
-        else {
+        });
+    } else {
+      const item = {
+        name: this.state.name,
+        description: this.state.description,
+        price: this.state.price,
+        restaurantId: this.state.restaurantId
+      }
+
+      console.log(item)
+      axios({
+        method: `POST`,
+        responseType: 'json',
+        url: `http://localhost:3000/item`,
+        headers: { 'x-access-token': token },
+        data: item,
+
+      })
+        .then((response) => {
           this.setState({
-            formClassName: 'warning',
-            formErrorMessage: 'Something went wrong. ' + err
+            formClassName: 'success'
           });
-        }
-      });
+
+
+          this.setState({
+            name: '',
+            description: '',
+            price: '',
+            restaurantId: ''
+          });
+
+        })
+        .catch((err) => {
+          if (err.response) {
+            if (err.response.data) {
+              this.setState({
+                formClassName: 'warning',
+                formErrorMessage: err.response.data.Message
+              });
+            }
+          }
+          else {
+            this.setState({
+              formClassName: 'warning',
+              formErrorMessage: 'Something went wrong. ' + err
+            });
+          }
+        });
+    }
   }
 
   handleSelectChange(e, data) {
     this.setState({ restaurantId: data.value });
   }
-
-
 
   render() {
 

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Button, Modal } from 'semantic-ui-react';
 import axios from 'axios';
+import { getToken } from '../../../services/Auth';
 
 class ModalConfirmDelete extends Component {
 
@@ -20,9 +21,10 @@ class ModalConfirmDelete extends Component {
   handleClose = e => this.setState({ modalOpen: false });
 
   handleSubmit(e) {
-    axios.delete(`http://localhost:3000/users/delete`,{ data: { id: this.props.user._id } })
+    axios.delete(`http://localhost:3000/order/${this.props.order._id}`,{
+    headers: { 'x-access-token': getToken() }
+   })
     .then((response) => {
-      this.props.onUserDeleted;
       this.handleClose();
     })
     .catch((err) => {      
@@ -40,12 +42,12 @@ class ModalConfirmDelete extends Component {
         dimmer='inverted'
         size='tiny'
       >
-        <Modal.Header>Deletar usuário</Modal.Header>
+        <Modal.Header>Encerrar pedido</Modal.Header>
         <Modal.Content>
-          <p>Tem certeza que deseja deletar o usuário: <strong>{this.props.user.name}</strong>?</p>
+          <p>Tem certeza que deseja encerrar o pedido?</p>
         </Modal.Content>
         <Modal.Actions>
-          <Button onClick={this.handleSubmit} data-userID={this.props.user._id} color='red'>Sim</Button>
+          <Button onClick={this.handleSubmit} color='red'>Sim</Button>
           <Button onClick={this.handleClose} color='black'>Não</Button>
           </Modal.Actions>
       </Modal>

@@ -82,7 +82,6 @@ class FormOrder extends Component {
       .then((response) => {
         this.setState({
           formClassName: 'success',
-          formSuccessMessage: response.data.message
         });
 
         this.setState({
@@ -112,20 +111,28 @@ class FormOrder extends Component {
   }
 
   handleChange = (e, data) => {
-    this.setState({ price: data.options[0].price });
+    console.log(data)
+        this.setState({ "name": data.value });
+
+        axios.get(`http://localhost:3000/item/${data.value}`, {
+          headers: { 'x-access-token': token }
+        }).then(response => {
+          console.log(response)
+          this.setState({"price": response.data.data.item.price})})
 
   }
 
   handleSelectChange = (e, data) => {
-
-    this.setState({ restaurantId: data.value });
+    
+    
+    this.setState({ "restaurantId": data.value });
 
     axios.get(`http://localhost:3000/item`, {
       headers: { 'x-access-token': token },
     })
       .then((response) => {
-        response.data.items.forEach((item) => {
-          items.push({ "key": Math.random(), "value": item._id, "text": item.name, "price": item.price, "restaurant": item.restaurantId })
+        response.data.items.forEach((item, index) => {
+          items.push({ "key": index, "value": item._id, "text": item.name, "restaurantId": item.restaurantId})
         })
       })
       .catch((err) => {
@@ -134,7 +141,7 @@ class FormOrder extends Component {
     this.state.items = ''
 
     items.forEach((item) => {
-      if (item.restaurant == this.state.restaurantId) {
+      if (item.restaurantId == data.value) {
         arr.push(item)
       }
     })
@@ -142,6 +149,13 @@ class FormOrder extends Component {
     console.log(arr)
 
   }
+
+  reformatOptions = options =>
+  map(options, e => ({
+    key: get(e, 'key'),
+    value: get(e, 'value'),
+    text: get(e, 'text'), // (or whatever other format you wish to use)
+  }))
   
   render() {
 
@@ -172,15 +186,7 @@ class FormOrder extends Component {
                 control={Select}
                 label='Item'
                 placeholder='Porção de fritas'
-                options={
-                  arr.map(item => ({
-                    key: item.key,
-                    value: item.value,
-                    text: item.text,
-                    price: item.price,
-                    restaurant: item.restaurant,
-
-                  }))}
+                options={this.reformatOptions(arr)}
                 value={this.state.name}
                 required
                 onChange={this.handleChange}
@@ -209,7 +215,7 @@ class FormOrder extends Component {
               <Message
                 success
                 color='green'
-                header='Nice one!'
+                header='Pedido realizado com sucesso'
                 content={formSuccessMessage}
               />
               <Message

@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 
 import axios from 'axios';
-import {  Modal, Container } from 'semantic-ui-react';
+import {  Modal, Container, Header } from 'semantic-ui-react';
 
 import FormUser from '../FormUser/FormUser';
+import HeaderComp from '../Header/Header';
 
 
 
@@ -45,16 +46,15 @@ class SignUp extends Component {
   render() {
 
     return (
-      <Container>
-      <Modal open="true">
-          <Modal.Header>Cadastro de usuário</Modal.Header>
-          <Modal.Content>
+      <Container>   
+        <HeaderComp></HeaderComp>
+      <Header as='h2' color='teal' textAlign='center' style={{ marginTop: '15vh' }}>
+            Cadstro de Restaurante:
+        </Header>
             <FormUser
               buttonSubmitTitle="Cadastrar"
               buttonColor="green"
               onUserAdded={this.props.onUserAdded}/>
-          </Modal.Content>
-        </Modal>
       </Container>
     );
   }

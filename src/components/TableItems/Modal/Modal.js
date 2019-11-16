@@ -1,25 +1,27 @@
 import React, { Component } from 'react';
 import { Button, Modal } from 'semantic-ui-react';
 
-import FormUser from '../FormUser/FormUser';
+import FormItem from '../../FormItem/FormItem';
 
-class ModalUser extends Component {
+class ModalRestaurant extends Component {
+
+  componentWillMount(){
+  }
 
   render() {
     return (
       <Modal
-        trigger={<Button color="{this.props.buttonColor}">{this.props.buttonTriggerTitle}</Button>}
+        trigger={<Button color={this.props.buttonColor}>{this.props.buttonTriggerTitle}</Button>}
         dimmer='inverted'
         size='tiny'
         closeIcon='close'
       >
         <Modal.Header>{this.props.headerTitle}</Modal.Header>
         <Modal.Content>
-          <FormUser
+          <FormItem
             buttonSubmitTitle={this.props.buttonSubmitTitle}
             buttonColor={this.props.buttonColor}
-            user={this.props.user}
-            onUserUpdated={this.props.onUserUpdated}
+            item={this.props.item}
           />
         </Modal.Content>
       </Modal>
@@ -27,4 +29,4 @@ class ModalUser extends Component {
   }
 }
 
-export default ModalUser;
+export default ModalRestaurant;

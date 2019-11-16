@@ -10,9 +10,6 @@ import HeaderComp from '../Header/Header'
 class TableUser extends Component {
   constructor() {
     super();
-
-    this.handleUserUpdated = this.handleUserUpdated.bind(this);
-    this.handleUserDeleted = this.handleUserDeleted.bind(this);
   }
 
   handleUserUpdated(user) {
@@ -50,40 +47,9 @@ class TableUser extends Component {
       })
   }
 
-  handleUserDeleted(user) {
-    let users = this.props.users.slice();
-    users = users.filter(u => { return u._id !== user._id; });
-    axios.delete(`http://localhost:3000/users/delete`,{ data: { id: user._id } })
-      .then((response) => {
-        this.setState({
-          formClassName: 'success',
-          formSuccessMessage: response.data.msg
-        });
-      })
-      .catch((err) => {
-        if (err.response) {
-          if (err.response.data) {
-            this.setState({
-              formClassName: 'warning',
-              formErrorMessage: err.response.data.msg
-            });
-          }
-        }
-        else {
-          this.setState({
-            formClassName: 'warning',
-            formErrorMessage: 'Something went wrong. ' + err
-          });
-        }
-      })
-
-
-  }
-
-
-
-
   render() {
+
+    console.log(this.props.onUserDeleted)
 
     let users = this.props.users;
 
@@ -97,15 +63,15 @@ class TableUser extends Component {
             buttonTriggerTitle='Editar'
             buttonSubmitTitle='Salvar'
             buttonColor='blue'
-            userID={user._id}
-            onUserUpdated={this.onUserUpdated}
+            user={user}
+            onUserUpdated={this.props.onUserUpdated}
           />
           <ModalConfirmDelete
             headerTitle='Deletar'
             buttonTriggerTitle='Deletar'
             buttonColor='black'
             user={user}
-            onUserDeleted={this.onUserDeleted}
+            onUserDeleted={this.props.onUserDeleted}
           />
         </Table.Cell>
       </Table.Row>

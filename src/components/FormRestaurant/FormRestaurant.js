@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Container, Divider, Dropdown, Grid, Header, Image, List, Menu, Modal, Form, Message, Button, Segment} from 'semantic-ui-react';
+import { Container, Divider, Dropdown, Grid, Header, Image, List, Menu, Modal, Form, Message, Button, Segment } from 'semantic-ui-react';
 import { withRouter } from 'react-router';
 
 import axios from 'axios';
@@ -21,7 +21,8 @@ class FormRestaurant extends Component {
       category: '',
       about: '',
       hours: '',
-      deliveryTime: ''
+      deliveryTime: '',
+      showMe: true
     }
 
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -29,10 +30,19 @@ class FormRestaurant extends Component {
   }
 
   componentWillMount() {
-    // Fill in the form with the appropriate data if user id is provided
-    if (!this.props.loggedIn) {
+    if (this.props.restaurant) {
+      this.setState({
+        name: this.props.restaurant.name,
+        category: this.props.restaurant.category,
+        about: this.props.restaurant.about,
+        hours: this.props.restaurant.hours,
+        deliveryTime: this.props.restaurant.deliveryTime,
+        showMe:false
+      })
+    } else if (!this.props.loggedIn) {
       this.props.history.push('/');
     } else {
+
       token = getToken()
     }
   }
@@ -50,26 +60,67 @@ class FormRestaurant extends Component {
     // Prevent browser refresh
     e.preventDefault();
 
-    const restaurant = {
-      name: this.state.name,
-      category: this.state.category,
-      about: this.state.about,
-      hours: this.state.hours,
-      deliveryTime: this.state.deliveryTime
-    }
+    if (this.props.restaurant) {
+      const restaurant = {
+        name: this.state.name,
+        category: this.state.category,
+        about: this.state.about,
+        hours: this.state.hours,
+        deliveryTime: this.state.deliveryTime
+      }
 
-    axios({
-      method: `POST`,
-      responseType: 'json',
-      url: `http://localhost:3000/restaurant`,
-      headers: { 'x-access-token': token },
-      data: restaurant,
+      axios({
+        method: `PUT`,
+        responseType: 'json',
+        url: `http://localhost:3000/restaurant/${this.props.restaurant._id}`,
+        headers: { 'x-access-token': token },
+        data: restaurant,
 
-    })
-      .then((response) => {
-        this.setState({
-          formClassName: 'success',
+      })
+        .then((response) => {
+          this.setState({
+            formClassName: 'success',
+            formErrorMessage: "Atualizado com sucesso"
+          });
+        })
+        .catch((err) => {
+          if (err.response) {
+            if (err.response.data) {
+              this.setState({
+                formClassName: 'warning',
+                formErrorMessage: err.response.data.message
+              });
+            }
+          }
+          else {
+            this.setState({
+              formClassName: 'warning',
+              formErrorMessage: 'Something went wrong. ' + err
+            });
+          }
         });
+
+    } else {
+      const restaurant = {
+        name: this.state.name,
+        category: this.state.category,
+        about: this.state.about,
+        hours: this.state.hours,
+        deliveryTime: this.state.deliveryTime
+      }
+
+      axios({
+        method: `POST`,
+        responseType: 'json',
+        url: `http://localhost:3000/restaurant`,
+        headers: { 'x-access-token': token },
+        data: restaurant,
+
+      })
+        .then((response) => {
+          this.setState({
+            formClassName: 'success',
+          });
 
           this.setState({
             name: '',
@@ -78,25 +129,26 @@ class FormRestaurant extends Component {
             hours: '',
             deliveryTime: ''
           });
-          
 
-      })
-      .catch((err) => {
-        if (err.response) {
-          if (err.response.data) {
+
+        })
+        .catch((err) => {
+          if (err.response) {
+            if (err.response.data) {
+              this.setState({
+                formClassName: 'warning',
+                formErrorMessage: err.response.data.message
+              });
+            }
+          }
+          else {
             this.setState({
               formClassName: 'warning',
-              formErrorMessage: err.response.data.message
+              formErrorMessage: 'Something went wrong. ' + err
             });
           }
-        }
-        else {
-          this.setState({
-            formClassName: 'warning',
-            formErrorMessage: 'Something went wrong. ' + err
-          });
-        }
-      });
+        });
+    }
   }
 
   render() {
@@ -107,15 +159,13 @@ class FormRestaurant extends Component {
 
     return (
       <Container>
-        <HeaderComp></HeaderComp>
-        
-          <Grid textAlign='center' style={{ height: '100vh' }} verticalAlign='middle'>
-        <Grid.Column style={{ maxWidth: 450 }}>
-          <Header as='h2' color='teal' textAlign='center'>
-            Cadstro de Restaurante:
-        </Header>
-        <Form className={formClassName} size='large' onSubmit={this.handleSubmit}>
-        <Form.Input
+        {this.state.showMe ? <HeaderComp></HeaderComp> : null } 
+
+        <Grid textAlign='center' style={{ height: '100vh' }} verticalAlign='middle'>
+          <Grid.Column style={{ maxWidth: 450 }}>
+          {this.state.showMe ? <Header as='h2' color='teal' textAlign='center'>Cadastro de Restaurante:</Header>  : null }
+            <Form className={formClassName} size='large' onSubmit={this.handleSubmit}>
+              <Form.Input
                 label='Nome'
                 type='text'
                 placeholder='Padaria do Português'
@@ -177,11 +227,11 @@ class FormRestaurant extends Component {
               <Button color="green" floated='center'>Cadastrar</Button>
               <br /><br />
             </Form>
-          
-        </Grid.Column>
-      </Grid>
-            
-        
+
+          </Grid.Column>
+        </Grid>
+
+
       </Container>
 
     );

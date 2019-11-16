@@ -5,6 +5,7 @@ import Login from '../Login/Login';
 import SignUp from '../SignUp/SignUp';
 import ListComponent from '../List/List'
 
+import { getToken } from '../../services/Auth'
 import './App.css';
 
 import { login } from '../../services/Auth'
@@ -13,19 +14,22 @@ import FormItem from '../FormItem/FormItem';
 import FormOrder from '../FormOrder/FormOrder';
 import FormUser from '../FormUser/FormUser';
 import TableUser from '../TableUser/TableUser';
+import TableRestaurants from '../TableRestaurants/TableRestaurants';
+import TableItems from '../TableItems/TableItems';
+import TableOrder from '../TableOrders/TableOrder';
 
 
+let token = 'null'
 class App extends Component {
 
   constructor() {
     super();
 
-    this.server = process.env.REACT_APP_API_URL || 'http://localhost:3000';
-
     this.state = {
       users: [],
       restaurants: [],
-      items: [],
+      items: [],      
+      orders: [],
       loggedIn: false
     }
 
@@ -53,6 +57,39 @@ class App extends Component {
       });
   }
 
+  fetchItems() {
+    axios.get(`http://localhost:3000/item`, { headers: { 'x-access-token': token } })
+      .then((response) => {
+        console.log(response)
+        this.setState({ items: response.data.items });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  fetchOrders() {
+    axios.get(`http://localhost:3000/order`, { headers: { 'x-access-token': token } })
+      .then((response) => {
+        console.log(response)
+        this.setState({ orders: response.data.orders });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  fetchRestaurants() {
+    axios.get(`http://localhost:3000/restaurant`, { headers: { 'x-access-token': token } })
+      .then((response) => {
+        console.log(response)
+        this.setState({ restaurants: response.data.restaurants });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
   handleRestaurantAdded(restaurant) {
     let restaurants = this.state.restaurants.slice();
     restaurants.push(restaurant);
@@ -62,8 +99,11 @@ class App extends Component {
   handleUserLogin = (res) => {
     login(res)
     this.setState({ loggedIn: true });
+    token = getToken()
 
-    return <Redirect to='/signup' />
+    this.fetchRestaurants();
+    this.fetchItems();
+    this.fetchOrders();
   }
 
   handleUserAdded(user) {
@@ -72,7 +112,7 @@ class App extends Component {
     this.setState({ users: users });
   }
 
-  
+
 
 
   handleItemAdded(item) {
@@ -95,10 +135,9 @@ class App extends Component {
     this.setState({ users: users });
   }
 
-  handleUserDeleted(user) {
-    let users = this.state.users.slice();
-    users = users.filter(u => { return u._id !== user._id; });
-    this.setState({ users: users });
+  handleUserDeleted() {
+    console.log('derick')
+    this.fetchUsers()
   }
 
 
@@ -128,11 +167,23 @@ class App extends Component {
                 />
 
                 <Route path="/users"
-                  render={() => <TableUser users={this.state.users} />}
+                  render={() => <TableUser users={this.state.users} onUserDelete={this.handleUserDeleted} />}
+                />
+
+                <Route path="/listRestaurant"
+                  render={() => <TableRestaurants restaurants={this.state.restaurants} onUserDelete={this.handleUserDeleted} />}
                 />
 
                 <Route path="/orders"
                   render={() => <FormOrder loggedIn={this.state.loggedIn} />}
+                />
+
+                <Route path="/listItem"
+                  render={() => <TableItems items={this.state.items} loggedIn={this.state.loggedIn} />}
+                />
+
+                <Route path="/listOrder"
+                  render={() => <TableOrder orders={this.state.orders} loggedIn={this.state.loggedIn} />}
                 />
 
               </Switch>
