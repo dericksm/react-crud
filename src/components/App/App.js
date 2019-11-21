@@ -45,6 +45,8 @@ class App extends Component {
     this.fetchUsers();
   }
 
+ 
+
   // Fetch data from the back-end
   fetchUsers() {
     axios.get(`http://localhost:3000/users`)
@@ -79,7 +81,7 @@ class App extends Component {
       });
   }
 
-  fetchRestaurants() {
+  fetchRestaurants = () => {
     axios.get(`http://localhost:3000/restaurant`, { headers: { 'x-access-token': token } })
       .then((response) => {
         console.log(response)
@@ -160,7 +162,7 @@ class App extends Component {
                 />
 
                 <Route path="/restaurant"
-                  render={() => <FormRestaurant loggedIn={this.state.loggedIn} onUserAdded={this.handleUserAdded} />}
+                  render={() => <FormRestaurant loggedIn={this.state.loggedIn} onRestaurantAdded={this.fetchRestaurants} />}
                 />
                 <Route path="/item"
                   render={() => <FormItem loggedIn={this.state.loggedIn} />}
@@ -171,7 +173,7 @@ class App extends Component {
                 />
 
                 <Route path="/listRestaurant"
-                  render={() => <TableRestaurants restaurants={this.state.restaurants} onUserDelete={this.handleUserDeleted} />}
+                  render={() => <TableRestaurants restaurants={this.state.restaurants} update={this.fetchRestaurants} onUserDelete={this.handleUserDeleted} />}
                 />
 
                 <Route path="/orders"

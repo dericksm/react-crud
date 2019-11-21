@@ -26,11 +26,10 @@ class TableRestaurants extends Component {
         headers: { 'x-access-token': getToken() }
       })
       .then(response => {
-        if (response.data.restaurant != null) {
-          this.setState({
-            restaurants: response.data.restaurant
-          })
-
+        console.log(response)
+        if (response.data.data.restaurant != null) {
+          this.setState({restaurants: [response.data.data.restaurant]})
+          restaurants.length = 0
           restaurants = response.data.restaurant
 
         }
@@ -38,11 +37,13 @@ class TableRestaurants extends Component {
 
   }
 
+  componentDidMount() {
+    this.setState({restaurants : this.props.restaurants})
+  }
+
 
 
   render() {
-
-    this.setState({ restaurants: this.props.restaurants })
 
     restaurants = this.state.restaurants.map((restaurant) =>
       <Table.Row key={restaurant._id}>

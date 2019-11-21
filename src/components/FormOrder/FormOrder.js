@@ -41,6 +41,7 @@ class FormOrder extends Component {
         headers: { 'x-access-token': token },
       })
         .then((response) => {
+          restaurants.length = 0
           response.data.restaurants.forEach((restaurant, index) => {
             restaurants.push({ "key": Math.random(), "value": restaurant._id, "text": restaurant.name })
           })

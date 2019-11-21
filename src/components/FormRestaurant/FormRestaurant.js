@@ -82,6 +82,7 @@ class FormRestaurant extends Component {
             formClassName: 'success',
             formErrorMessage: "Atualizado com sucesso"
           });
+
         })
         .catch((err) => {
           if (err.response) {
@@ -122,6 +123,9 @@ class FormRestaurant extends Component {
             formClassName: 'success',
           });
 
+          
+          this.props.onRestaurantAdded()
+          
           this.setState({
             name: '',
             category: '',
