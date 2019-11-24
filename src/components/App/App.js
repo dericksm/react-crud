@@ -28,16 +28,10 @@ class App extends Component {
     this.state = {
       users: [],
       restaurants: [],
-      items: [],      
+      items: [],
       orders: [],
       loggedIn: false
     }
-
-    this.fetchUsers = this.fetchUsers.bind(this);
-    this.handleRestaurantAdded = this.handleRestaurantAdded.bind(this);
-    this.handleUserAdded = this.handleUserAdded.bind(this);
-    this.handleUserUpdated = this.handleUserUpdated.bind(this);
-    this.handleUserDeleted = this.handleUserDeleted.bind(this);
   }
 
   // Place socket.io code inside here
@@ -45,10 +39,10 @@ class App extends Component {
     this.fetchUsers();
   }
 
- 
+
 
   // Fetch data from the back-end
-  fetchUsers() {
+  fetchUsers = () => {
     axios.get(`http://localhost:3000/users`)
       .then((response) => {
         console.log(response)
@@ -59,7 +53,7 @@ class App extends Component {
       });
   }
 
-  fetchItems() {
+  fetchItems = () => {
     axios.get(`http://localhost:3000/item`, { headers: { 'x-access-token': token } })
       .then((response) => {
         console.log(response)
@@ -70,7 +64,7 @@ class App extends Component {
       });
   }
 
-  fetchOrders() {
+  fetchOrders = () => {
     axios.get(`http://localhost:3000/order`, { headers: { 'x-access-token': token } })
       .then((response) => {
         console.log(response)
@@ -92,7 +86,7 @@ class App extends Component {
       });
   }
 
-  handleRestaurantAdded(restaurant) {
+  handleRestaurantAdded = (restaurant) => {
     let restaurants = this.state.restaurants.slice();
     restaurants.push(restaurant);
     this.setState({ restaurants: restaurants });
@@ -108,22 +102,20 @@ class App extends Component {
     this.fetchOrders();
   }
 
-  handleUserAdded(user) {
+  handleUserAdded = (user) => {
     let users = this.state.users.slice();
     users.push(user);
     this.setState({ users: users });
   }
 
 
-
-
-  handleItemAdded(item) {
+  handleItemAdded = (item) => {
     let items = this.state.items.slice();
     items.push(item);
     this.setState({ items: items });
   }
 
-  handleUserUpdated(user) {
+  handleUserUpdated = (user) => {
     let users = this.state.users.slice();
     for (let i = 0, n = users.length; i < n; i++) {
       if (users[i]._id === user._id) {
@@ -137,7 +129,7 @@ class App extends Component {
     this.setState({ users: users });
   }
 
-  handleUserDeleted() {
+  handleUserDeleted = () => {
     console.log('derick')
     this.fetchUsers()
   }
@@ -162,30 +154,30 @@ class App extends Component {
                 />
 
                 <Route path="/restaurant"
-                  render={() => <FormRestaurant loggedIn={this.state.loggedIn} onRestaurantAdded={this.fetchRestaurants} />}
+                  render={() => <FormRestaurant loggedIn={this.state.loggedIn} update={this.fetchRestaurants} />}
                 />
                 <Route path="/item"
-                  render={() => <FormItem loggedIn={this.state.loggedIn} />}
+                  render={() => <FormItem loggedIn={this.state.loggedIn} update={this.fetchItems} />}
                 />
 
                 <Route path="/users"
-                  render={() => <TableUser users={this.state.users} onUserDelete={this.handleUserDeleted} />}
+                  render={() => <TableUser users={this.state.users} update={this.fetchUsers} />}
                 />
 
                 <Route path="/listRestaurant"
-                  render={() => <TableRestaurants restaurants={this.state.restaurants} update={this.fetchRestaurants} onUserDelete={this.handleUserDeleted} />}
+                  render={() => <TableRestaurants restaurants={this.state.restaurants} update={this.fetchRestaurants} />}
                 />
 
                 <Route path="/orders"
-                  render={() => <FormOrder loggedIn={this.state.loggedIn} />}
+                  render={() => <FormOrder orders={this.state.orders}  update={this.fetchOrders}  loggedIn={this.state.loggedIn} />}
                 />
 
                 <Route path="/listItem"
-                  render={() => <TableItems items={this.state.items} loggedIn={this.state.loggedIn} />}
+                  render={() => <TableItems items={this.state.items}  update={this.fetchItems} loggedIn={this.state.loggedIn} />}
                 />
 
                 <Route path="/listOrder"
-                  render={() => <TableOrder orders={this.state.orders} loggedIn={this.state.loggedIn} />}
+                  render={() => <TableOrder orders={this.state.orders}  update={this.fetchOrders} loggedIn={this.state.loggedIn} />}
                 />
 
               </Switch>

@@ -6,10 +6,14 @@ import ModalConfirmDelete from '../ModalConfirmDelete/ModalConfirmDelete';
 
 import axios from 'axios';
 import HeaderComp from '../Header/Header'
-
+let users = []
 class TableUser extends Component {
   constructor() {
     super();
+
+    this.state = {
+      orders: []
+    }
   }
 
   handleUserUpdated(user) {
@@ -33,6 +37,7 @@ class TableUser extends Component {
           formClassName: 'success',
           formSuccessMessage: response.data.message
         });
+        this.props.update()
 
       })
       .catch((err) => {
@@ -47,11 +52,10 @@ class TableUser extends Component {
       })
   }
 
-  render() {
-
-    console.log(this.props.onUserDeleted)
-
-    let users = this.props.users;
+  componentWillMount() {
+    this.setState({users : this.props.users})
+  }
+  render() {   
 
     users = users.map((user) =>
       <Table.Row key={user._id}>
@@ -64,14 +68,14 @@ class TableUser extends Component {
             buttonSubmitTitle='Salvar'
             buttonColor='blue'
             user={user}
-            onUserUpdated={this.props.onUserUpdated}
+            update={this.props.update}
           />
           <ModalConfirmDelete
             headerTitle='Deletar'
             buttonTriggerTitle='Deletar'
             buttonColor='black'
             user={user}
-            onUserDeleted={this.props.onUserDeleted}
+            update={this.props.update}
           />
         </Table.Cell>
       </Table.Row>

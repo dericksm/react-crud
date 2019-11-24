@@ -11,15 +11,17 @@ let orders
 class TableOrder extends Component {
   constructor() {
     super();
+
+    this.state = {
+      orders: []
+    }
   }
 
-  
+  componentDidMount() {
+    this.setState({orders : this.props.orders})
+  }
 
   render() {
-
-    orders = this.props.orders;
-
-    console.log(orders)
     orders = orders.map((order) =>
       <Table.Row key={order._id}>
         <Table.Cell>{order.name}</Table.Cell>

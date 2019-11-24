@@ -27,23 +27,21 @@ class TableItems extends Component {
         headers: { 'x-access-token': getToken() }
       })
       .then(response => {
-        if (response.data.item != null) {
-          this.setState({
-            items: response.data.item
-          })
-
-          items = response.data.item
+        if (response.data.data.item != null) {
+          this.setState({items: [response.data.data.item]})
+          items.length = 0
+          items = response.data.data.restaurant
 
         }
       }).catch()
 
   }
 
-  render() {
-
+  componentDidMount() {
     this.setState({ items: this.props.items })
+  }
 
-
+  render() {
     items = this.state.items.map((item) =>
       <Table.Row key={item._id}>
         <Table.Cell>{item.name}</Table.Cell>
@@ -56,12 +54,14 @@ class TableItems extends Component {
             buttonSubmitTitle='Salvar'
             buttonColor='blue'
             item={item}
+            update={this.props.update}
           />
           <ModalConfirmDelete
             headerTitle='Deletar'
             buttonTriggerTitle='Deletar'
             buttonColor='black'
             item={item}
+            update={this.props.update}
           />
         </Table.Cell>
       </Table.Row>
@@ -74,14 +74,14 @@ class TableItems extends Component {
       <Container>
         <HeaderComp></HeaderComp>
         <Container>
-        <label>Pesquisar</label>
-              <Search
+          <label>Pesquisar</label>
+          <Search
 
-                onResultSelect={this.handleResultSelect}
-                onSearchChange={debounce(this.handleSearchChange, 500, {
-                  leading: true,
-                })}
-              />
+            onResultSelect={this.handleResultSelect}
+            onSearchChange={debounce(this.handleSearchChange, 500, {
+              leading: true,
+            })}
+          />
           <Grid textAlign='center' style={{ marginTop: '5vh' }} verticalAlign='middle'>
             <Grid.Column style={{ maxWidth: 450 }}>
 
@@ -90,7 +90,7 @@ class TableItems extends Component {
                   <Table.Row>
                     <Table.HeaderCell>Nome</Table.HeaderCell>
                     <Table.HeaderCell>Drscrição</Table.HeaderCell>
-                    <Table.HeaderCell>Preço</Table.HeaderCell>                    
+                    <Table.HeaderCell>Preço</Table.HeaderCell>
                     <Table.HeaderCell>Editar</Table.HeaderCell>
                   </Table.Row>
                 </Table.Header>

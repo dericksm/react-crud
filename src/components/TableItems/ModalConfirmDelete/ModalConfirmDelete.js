@@ -25,6 +25,7 @@ class ModalConfirmDelete extends Component {
     headers: { 'x-access-token': getToken() }
    })
     .then((response) => {
+      this.props.update()
       this.handleClose();
     })
     .catch((err) => {      

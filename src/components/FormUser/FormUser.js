@@ -58,13 +58,13 @@ class FormUser extends Component {
         url: `http://localhost:3000/users/update`,
         data: user
       })
-        .then((response) => {
-          console.log(response)
+        .then((response) => {          
           this.setState({
             formClassName: 'success',
             formSuccessMessage: response.data.msg
           });
 
+          this.props.update()
           this.setState({
             name: '',
             email: '',
@@ -104,6 +104,8 @@ class FormUser extends Component {
                     formClassName: 'success',
                     formSuccessMessage: response.data.msg
                   });
+
+                  this.props.update()
 
                   this.setState({
                     name: '',

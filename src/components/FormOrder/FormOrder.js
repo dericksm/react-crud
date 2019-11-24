@@ -85,6 +85,7 @@ class FormOrder extends Component {
           formClassName: 'success',
         });
 
+        this.props.update()
         this.setState({
           name: '',
           quantity: '',

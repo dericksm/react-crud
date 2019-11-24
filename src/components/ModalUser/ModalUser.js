@@ -19,7 +19,7 @@ class ModalUser extends Component {
             buttonSubmitTitle={this.props.buttonSubmitTitle}
             buttonColor={this.props.buttonColor}
             user={this.props.user}
-            onUserUpdated={this.props.onUserUpdated}
+            update={this.props.update}
           />
         </Modal.Content>
       </Modal>

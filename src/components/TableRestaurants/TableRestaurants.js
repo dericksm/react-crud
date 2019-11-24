@@ -29,16 +29,18 @@ class TableRestaurants extends Component {
         console.log(response)
         if (response.data.data.restaurant != null) {
           this.setState({restaurants: [response.data.data.restaurant]})
-          restaurants.length = 0
-          restaurants = response.data.restaurant
-
-        }
-      }).catch()
+        } else if(value == '') {
+          this.setState({restaurants: restaurants})
+        } else this.setState({restaurants: restaurants})
+      }).catch(err => {
+        this.setState({restaurants: restaurants})
+      })
 
   }
 
   componentDidMount() {
     this.setState({restaurants : this.props.restaurants})
+    restaurants = this.state.restaurants
   }
 
 
@@ -56,7 +58,7 @@ class TableRestaurants extends Component {
             buttonSubmitTitle='Salvar'
             buttonColor='blue'
             restaurant={restaurant}
-            onUserUpdated={this.props.onUserUpdated}
+            update={this.props.update}
           />
           <ModalConfirmDelete
             headerTitle='Deletar'

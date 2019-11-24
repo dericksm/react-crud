@@ -22,7 +22,7 @@ class ModalConfirmDelete extends Component {
   handleSubmit(e) {
     axios.delete(`http://localhost:3000/users/delete`,{ data: { id: this.props.user._id } })
     .then((response) => {
-      this.props.onUserDeleted;
+      this.props.update()
       this.handleClose();
     })
     .catch((err) => {      

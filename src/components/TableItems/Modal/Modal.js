@@ -22,6 +22,7 @@ class ModalRestaurant extends Component {
             buttonSubmitTitle={this.props.buttonSubmitTitle}
             buttonColor={this.props.buttonColor}
             item={this.props.item}
+            update={this.props.update}
           />
         </Modal.Content>
       </Modal>

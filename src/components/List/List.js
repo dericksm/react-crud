@@ -20,7 +20,7 @@ const ListComponent = () => (
     <Menu fixed='top' inverted>
       <Container>
         <Menu.Item as={Link} to='/' header>
-          Restaurante Dodói
+          Restaurante
         </Menu.Item>
         <Menu.Item as={Link} to='/orders'>Pedidos</Menu.Item>
         <Menu.Item as={Link} to='/users'>Usuários</Menu.Item>

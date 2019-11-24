@@ -148,6 +148,7 @@ class FormItem extends Component {
           this.setState({
             formClassName: 'success'
           });
+          this.props.update()
 
 
           this.setState({
